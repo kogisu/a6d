@@ -1,5 +1,8 @@
 .PHONY: all build_image create_network a6d_up a6d_down exec create_nodes
 
+a6ddockerID=$$(docker ps --format '{{.ID}}' --filter 'name=a6d')
+dockerID=$$(docker ps --format '{{.ID}}')
+inspect=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{println .IPAddress}}{{end}}' $$(dockerID))
 all: create_nodes
 
 build_image:
@@ -7,10 +10,10 @@ build_image:
 
 a6d_up: build_image create_network
 	docker run --privileged --name a6d -d \
-    --network a6d-network --network-alias docker \
-    -e DOCKER_TLS_CERTDIR=/certs \
-    -v some-docker-certs-ca:/certs/ca \
-    -v some-docker-certs-client:/certs/client \
+		--network a6d-network --network-alias docker \
+		-e DOCKER_TLS_CERTDIR=/certs \
+		-v some-docker-certs-ca:/certs/ca \
+		-v some-docker-certs-client:/certs/client \
 		-v `pwd`:/ansibled \
     dind
 
@@ -30,3 +33,6 @@ create_nodes: a6d_up
 	docker exec -it a6d docker run -it -d ubuntu-ssh
 	docker exec -it a6d docker run -it -d ubuntu-ssh
 	docker exec -it a6d docker run -it -d ubuntu-ssh
+
+list_nodes:
+	@docker inspect --format='{{range .NetworkSettings.Networks}}{{println .IPAddress}}{{end}}' $(a6ddockerID)

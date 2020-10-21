@@ -45,13 +45,13 @@ $ make
 Exec into the container
 
 ```sh
-docker exec -it a6d sh
+$ docker exec -it a6d sh
 ```
 
 Get running ubuntu containers
 
 ```sh
-/ # docker ps
+$ docker ps
 CONTAINER ID        IMAGE               COMMAND               CREATED             STATUS              PORTS               NAMES
 6173c6ea2609        ubuntu-ssh          "/usr/sbin/sshd -D"   18 seconds ago      Up 18 seconds       22/tcp              intelligent_diffie
 aa6057fd3571        ubuntu-ssh          "/usr/sbin/sshd -D"   19 seconds ago      Up 19 seconds       22/tcp              priceless_edison
@@ -60,26 +60,25 @@ aa6057fd3571        ubuntu-ssh          "/usr/sbin/sshd -D"   19 seconds ago    
 
 To bring down the network, run
 
-```
-make a6d_down
+```sh
+$ make a6d_down
 ```
 
 ## IP addresses
 
-docker creates an IP for each docker container in the network. To determine the IP addresses for each of the containers running on your machine, run for each container
+docker creates an IP for each docker container in the network. To determine the IP addresses for each of the containers running on your machine, first list the running containers:
 
 ```sh
-$ docker inspect <docker-container-hash>
-```
+# This is the control plane IP
+$ make list_nodes
+192.168.96.2
 
-Under the `Networks` section, look for the `IPAddress`
+$ make exec
+# The following are the worker node IPs
+$ /ansibled/my.sh
+172.17.0.4
 
-```json
-"Networks": {
-  "bridge": {
-    ...
-    "IPAddress": "172.17.0.4",
-    ...
-  }
-}
+172.17.0.3
+
+172.17.0.2
 ```
